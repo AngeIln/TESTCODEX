@@ -128,18 +128,25 @@ export default class TrainEntity {
   unloadCargo() {
     const factory = this.scene.stationManager.getFactoryAt(this.currentTile);
     if (factory && this.cargo.wood > 0) {
-      factory.storage.wood += this.cargo.wood;
-      this.cargo.wood = 0;
+      const free = Math.max(0, factory.capacity.wood - factory.storage.wood);
+      const delivered = Math.min(free, this.cargo.wood);
+      factory.storage.wood += delivered;
+      this.cargo.wood -= delivered;
       return;
     }
 
     const city = this.scene.stationManager.getCityAt(this.currentTile);
     if (city) {
-      const payout = this.cargo.planks * 45 + this.cargo.iron * 65;
-      city.storage.planks += this.cargo.planks;
-      city.storage.iron += this.cargo.iron;
-      this.cargo.planks = 0;
-      this.cargo.iron = 0;
+      const market = this.scene.marketManager;
+      const planksDelivered = Math.min(city.requests.planks, this.cargo.planks);
+      const ironDelivered = Math.min(city.requests.iron, this.cargo.iron);
+      const payout =
+        planksDelivered * market.getPrice("planks") +
+        ironDelivered * market.getPrice("iron");
+      city.storage.planks += planksDelivered;
+      city.storage.iron += ironDelivered;
+      this.cargo.planks -= planksDelivered;
+      this.cargo.iron -= ironDelivered;
       if (payout > 0) {
         this.economy.earn(payout);
       }

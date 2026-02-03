@@ -6,6 +6,11 @@ export function setupHUD(scene) {
   const routeInfoEl = document.getElementById("route-info");
   const stationsCountEl = document.getElementById("stations-count");
   const trainsCountEl = document.getElementById("trains-count");
+  const priceWoodEl = document.getElementById("price-wood");
+  const priceIronEl = document.getElementById("price-iron");
+  const pricePlanksEl = document.getElementById("price-planks");
+  const chartContext = document.getElementById("market-chart");
+  let marketChart;
 
   scene.economy.onChange((money) => {
     walletEl.textContent = `$${money}`;
@@ -42,6 +47,65 @@ export function setupHUD(scene) {
 
   scene.events.on("trains-updated", (count) => {
     trainsCountEl.textContent = `${count}`;
+  });
+
+  scene.events.on("market-updated", (market) => {
+    priceWoodEl.textContent = `$${market.prices.wood.toFixed(2)}`;
+    priceIronEl.textContent = `$${market.prices.iron.toFixed(2)}`;
+    pricePlanksEl.textContent = `$${market.prices.planks.toFixed(2)}`;
+
+    if (!marketChart && chartContext && window.Chart) {
+      marketChart = new window.Chart(chartContext, {
+        type: "line",
+        data: {
+          labels: market.history.wood.map((_, idx) => idx + 1),
+          datasets: [
+            {
+              label: "Bois",
+              data: market.history.wood,
+              borderColor: "#fbbf24",
+              backgroundColor: "rgba(251, 191, 36, 0.2)",
+              tension: 0.3,
+            },
+            {
+              label: "Fer",
+              data: market.history.iron,
+              borderColor: "#38bdf8",
+              backgroundColor: "rgba(56, 189, 248, 0.2)",
+              tension: 0.3,
+            },
+            {
+              label: "Planches",
+              data: market.history.planks,
+              borderColor: "#a78bfa",
+              backgroundColor: "rgba(167, 139, 250, 0.2)",
+              tension: 0.3,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { display: false },
+            y: { ticks: { color: "#94a3b8" } },
+          },
+          plugins: {
+            legend: {
+              labels: { color: "#e2e8f0", boxWidth: 10 },
+            },
+          },
+        },
+      });
+    }
+
+    if (marketChart) {
+      marketChart.data.labels = market.history.wood.map((_, idx) => idx + 1);
+      marketChart.data.datasets[0].data = market.history.wood;
+      marketChart.data.datasets[1].data = market.history.iron;
+      marketChart.data.datasets[2].data = market.history.planks;
+      marketChart.update();
+    }
   });
 
   scene.events.emit("stations-updated", scene.stationManager.stations.length);

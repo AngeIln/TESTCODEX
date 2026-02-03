@@ -13,7 +13,12 @@ export default class StationManager {
       iron: 6,
       planks: 4,
     };
-    this.stations.push({ tile: { ...tile }, storage });
+    const capacity = {
+      wood: 40,
+      iron: 40,
+      planks: 30,
+    };
+    this.stations.push({ tile: { ...tile }, storage, capacity });
   }
 
   addFactory(tile) {
@@ -21,7 +26,15 @@ export default class StationManager {
       wood: 0,
       planks: 0,
     };
-    this.factories.push({ tile: { ...tile }, storage });
+    const capacity = {
+      wood: 30,
+      planks: 30,
+    };
+    const requests = {
+      wood: 20,
+      planks: 0,
+    };
+    this.factories.push({ tile: { ...tile }, storage, capacity, requests });
   }
 
   addCity(tile) {
@@ -29,7 +42,11 @@ export default class StationManager {
       planks: 0,
       iron: 0,
     };
-    this.cities.push({ tile: { ...tile }, storage });
+    const requests = {
+      planks: 30,
+      iron: 20,
+    };
+    this.cities.push({ tile: { ...tile }, storage, requests });
   }
 
   getStationAt(tile) {
@@ -55,6 +72,12 @@ export default class StationManager {
         factory.storage.wood -= 2;
         factory.storage.planks = Math.min(RESOURCE_LIMITS.planks, factory.storage.planks + 1);
       }
+      factory.requests.wood = Math.max(0, factory.capacity.wood - factory.storage.wood);
+    });
+
+    this.cities.forEach((city) => {
+      city.requests.planks = Math.max(10, 30 - city.storage.planks);
+      city.requests.iron = Math.max(5, 20 - city.storage.iron);
     });
   }
 }

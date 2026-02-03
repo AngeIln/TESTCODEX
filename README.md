@@ -9,6 +9,7 @@ Prototype avancé pour un jeu de tycoon ferroviaire basé sur une économie mult
 - **Trains avec état et accélération/décélération**.
 - **Économie + boucle de production** (bois/fer → planches → paiement ville).
 - **HUD Bootstrap** avec outils et indicateurs de route.
+- **Marché dynamique** avec évolution des prix (Chart.js).
 
 ## ✅ Pré-requis
 - Un navigateur moderne (Chrome, Edge, Firefox).
@@ -39,6 +40,7 @@ src/
   EconomyManager.js
   GridManager.js
   MainScene.js
+  MarketManager.js
   Pathfinder.js
   Renderer.js
   StationManager.js

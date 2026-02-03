@@ -34,6 +34,18 @@ export const RESOURCE_LIMITS = {
   planks: 50,
 };
 
+export const MARKET_CONFIG = {
+  basePrices: {
+    wood: 12,
+    iron: 20,
+    planks: 30,
+  },
+  volatility: 0.08,
+  demandWeight: 0.6,
+  supplyWeight: 0.4,
+  historyLength: 30,
+};
+
 export const TRAIN_CONFIG = {
   maxSpeed: 120,
   acceleration: 220,

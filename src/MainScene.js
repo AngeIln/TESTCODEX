@@ -3,6 +3,7 @@ import EconomyManager from "./EconomyManager.js";
 import StationManager from "./StationManager.js";
 import TrainManager from "./TrainManager.js";
 import Renderer from "./Renderer.js";
+import MarketManager from "./MarketManager.js";
 import { GRID, TILE_COLORS, TILE_TYPES, PRODUCTION_TIMING, COSTS } from "./constants.js";
 import { setupHUD, getToolCost } from "./ui.js";
 
@@ -22,6 +23,7 @@ export default class MainScene extends Phaser.Scene {
     this.stationManager = new StationManager();
     this.trainManager = new TrainManager(this, this.grid, this.economy);
     this.renderer = new Renderer(this);
+    this.marketManager = new MarketManager();
 
     this.renderer.createTextures();
     this.drawInitialGrid();
@@ -30,6 +32,7 @@ export default class MainScene extends Phaser.Scene {
     this.setupProductionLoop();
     this.bootstrapDemo();
     setupHUD(this);
+    this.events.emit("market-updated", this.marketManager);
   }
 
   drawInitialGrid() {
@@ -107,7 +110,15 @@ export default class MainScene extends Phaser.Scene {
     this.time.addEvent({
       delay: PRODUCTION_TIMING.tickMs,
       loop: true,
-      callback: () => this.stationManager.tickProduction(),
+      callback: () => {
+        this.stationManager.tickProduction();
+        this.marketManager.tick(
+          this.stationManager.stations,
+          this.stationManager.factories,
+          this.stationManager.cities
+        );
+        this.events.emit("market-updated", this.marketManager);
+      },
     });
   }
 

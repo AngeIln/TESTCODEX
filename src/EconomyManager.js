@@ -2,6 +2,7 @@ export default class EconomyManager {
   constructor(startingMoney = 2000) {
     this.money = startingMoney;
     this.listeners = [];
+    this.ledger = [];
   }
 
   onChange(callback) {
@@ -18,11 +19,24 @@ export default class EconomyManager {
 
   spend(amount) {
     this.money = Math.max(0, this.money - amount);
+    this.addLedgerEntry("SPEND", -amount);
     this.notify();
   }
 
   earn(amount) {
     this.money += amount;
+    this.addLedgerEntry("EARN", amount);
     this.notify();
+  }
+
+  addLedgerEntry(type, amount) {
+    this.ledger.unshift({
+      type,
+      amount,
+      timestamp: new Date().toISOString(),
+    });
+    if (this.ledger.length > 50) {
+      this.ledger.pop();
+    }
   }
 }
