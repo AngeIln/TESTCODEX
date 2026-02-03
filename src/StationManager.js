@@ -80,4 +80,32 @@ export default class StationManager {
       city.requests.iron = Math.max(5, 20 - city.storage.iron);
     });
   }
+
+  getMaterialTotals() {
+    const totals = {
+      stock: { wood: 0, iron: 0, planks: 0 },
+      demand: { wood: 0, iron: 0, planks: 0 },
+    };
+
+    this.stations.forEach((station) => {
+      totals.stock.wood += station.storage.wood;
+      totals.stock.iron += station.storage.iron;
+      totals.stock.planks += station.storage.planks;
+    });
+
+    this.factories.forEach((factory) => {
+      totals.stock.wood += factory.storage.wood;
+      totals.stock.planks += factory.storage.planks;
+      totals.demand.wood += factory.requests.wood;
+    });
+
+    this.cities.forEach((city) => {
+      totals.stock.iron += city.storage.iron;
+      totals.stock.planks += city.storage.planks;
+      totals.demand.iron += city.requests.iron;
+      totals.demand.planks += city.requests.planks;
+    });
+
+    return totals;
+  }
 }

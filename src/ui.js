@@ -9,11 +9,18 @@ export function setupHUD(scene) {
   const priceWoodEl = document.getElementById("price-wood");
   const priceIronEl = document.getElementById("price-iron");
   const pricePlanksEl = document.getElementById("price-planks");
+  const stockWoodEl = document.getElementById("stock-wood");
+  const stockIronEl = document.getElementById("stock-iron");
+  const stockPlanksEl = document.getElementById("stock-planks");
+  const demandWoodEl = document.getElementById("demand-wood");
+  const demandIronEl = document.getElementById("demand-iron");
+  const demandPlanksEl = document.getElementById("demand-planks");
   const chartContext = document.getElementById("market-chart");
   let marketChart;
 
   scene.economy.onChange((money) => {
     walletEl.textContent = `$${money}`;
+    triggerPulse(walletEl);
   });
   scene.economy.notify();
 
@@ -106,10 +113,27 @@ export function setupHUD(scene) {
       marketChart.data.datasets[2].data = market.history.planks;
       marketChart.update();
     }
+
+    updateMaterialTotals(scene, {
+      stockWoodEl,
+      stockIronEl,
+      stockPlanksEl,
+      demandWoodEl,
+      demandIronEl,
+      demandPlanksEl,
+    });
   });
 
   scene.events.emit("stations-updated", scene.stationManager.stations.length);
   scene.events.emit("trains-updated", scene.trainManager.trains.length);
+  updateMaterialTotals(scene, {
+    stockWoodEl,
+    stockIronEl,
+    stockPlanksEl,
+    demandWoodEl,
+    demandIronEl,
+    demandPlanksEl,
+  });
 }
 
 export function getToolCost(tool) {
@@ -125,4 +149,27 @@ function labelTool(tool) {
     train: "Train",
   };
   return labels[tool] ?? tool;
+}
+
+function updateMaterialTotals(
+  scene,
+  { stockWoodEl, stockIronEl, stockPlanksEl, demandWoodEl, demandIronEl, demandPlanksEl }
+) {
+  const totals = scene.stationManager.getMaterialTotals();
+  stockWoodEl.textContent = totals.stock.wood.toFixed(0);
+  stockIronEl.textContent = totals.stock.iron.toFixed(0);
+  stockPlanksEl.textContent = totals.stock.planks.toFixed(0);
+  demandWoodEl.textContent = totals.demand.wood.toFixed(0);
+  demandIronEl.textContent = totals.demand.iron.toFixed(0);
+  demandPlanksEl.textContent = totals.demand.planks.toFixed(0);
+  triggerPulse(stockWoodEl);
+  triggerPulse(stockIronEl);
+  triggerPulse(stockPlanksEl);
+}
+
+function triggerPulse(target) {
+  if (!target) return;
+  target.classList.remove("pulse");
+  void target.offsetWidth;
+  target.classList.add("pulse");
 }
