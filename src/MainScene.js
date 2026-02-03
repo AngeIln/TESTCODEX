@@ -2,6 +2,7 @@ import GridManager from "./GridManager.js";
 import EconomyManager from "./EconomyManager.js";
 import StationManager from "./StationManager.js";
 import TrainManager from "./TrainManager.js";
+import Renderer from "./Renderer.js";
 import { GRID, TILE_COLORS, TILE_TYPES, PRODUCTION_TIMING, COSTS } from "./constants.js";
 import { setupHUD, getToolCost } from "./ui.js";
 
@@ -20,7 +21,9 @@ export default class MainScene extends Phaser.Scene {
     this.economy = new EconomyManager();
     this.stationManager = new StationManager();
     this.trainManager = new TrainManager(this, this.grid, this.economy);
+    this.renderer = new Renderer(this);
 
+    this.renderer.createTextures();
     this.drawInitialGrid();
     this.setupCamera();
     this.setupInput();
@@ -33,15 +36,13 @@ export default class MainScene extends Phaser.Scene {
     this.tileSprites = Array.from({ length: GRID.rows }, () => Array(GRID.cols).fill(null));
     for (let y = 0; y < GRID.rows; y += 1) {
       for (let x = 0; x < GRID.cols; x += 1) {
-        const rect = this.add.rectangle(
+        const image = this.add.image(
           x * GRID.tileSize + GRID.tileSize / 2,
           y * GRID.tileSize + GRID.tileSize / 2,
-          GRID.tileSize - 1,
-          GRID.tileSize - 1,
-          TILE_COLORS.grass
+          TILE_TYPES.grass
         );
-        rect.setStrokeStyle(1, 0x1b4d2d);
-        this.tileSprites[y][x] = rect;
+        image.setDisplaySize(GRID.tileSize, GRID.tileSize);
+        this.tileSprites[y][x] = image;
       }
     }
 
@@ -50,9 +51,14 @@ export default class MainScene extends Phaser.Scene {
 
   redrawTile(x, y) {
     const tile = this.grid.getTile(x, y);
-    const rect = this.tileSprites[y]?.[x];
-    if (!tile || !rect) return;
-    rect.setFillStyle(TILE_COLORS[tile.type] ?? TILE_COLORS.grass);
+    const sprite = this.tileSprites[y]?.[x];
+    if (!tile || !sprite) return;
+    sprite.setTexture(tile.type);
+    if (tile.type === TILE_TYPES.grass) {
+      sprite.setTint(TILE_COLORS.grass);
+    } else {
+      sprite.clearTint();
+    }
   }
 
   setupCamera() {

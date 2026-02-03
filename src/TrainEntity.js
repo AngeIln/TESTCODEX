@@ -13,12 +13,10 @@ export default class TrainEntity {
     this.pathIndex = 0;
     this.speed = 0;
     this.cargo = { wood: 0, iron: 0, planks: 0 };
-    this.sprite = scene.add.rectangle(
-      0,
-      0,
+    this.sprite = scene.add.image(0, 0, "train");
+    this.sprite.setDisplaySize(
       grid.tileSize * TRAIN_CONFIG.sizeRatio,
-      grid.tileSize * TRAIN_CONFIG.sizeRatio,
-      0x3b82f6
+      grid.tileSize * TRAIN_CONFIG.sizeRatio
     );
     this.sprite.setOrigin(0.5, 0.5);
     this.updateWorldPosition();
@@ -70,6 +68,7 @@ export default class TrainEntity {
     const move = Math.min(distance, this.speed * (delta / 1000));
     this.sprite.x += Math.cos(angle) * move;
     this.sprite.y += Math.sin(angle) * move;
+    this.sprite.rotation = angle;
 
     if (distance <= 2) {
       this.currentTile = { ...nextTile };
