@@ -1,0 +1,91 @@
+:root {
+  color-scheme: dark;
+  --hud-bg: rgba(17, 24, 39, 0.95);
+  --hud-border: rgba(255, 255, 255, 0.08);
+  --hud-text: #e2e8f0;
+  --hud-muted: #94a3b8;
+  --tile-size: 32px;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #0f172a;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+#phaser-root {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#hud {
+  position: absolute;
+  z-index: 20;
+  top: 16px;
+  left: 16px;
+  width: 320px;
+  background: var(--hud-bg);
+  border: 1px solid var(--hud-border);
+  border-radius: 12px;
+  padding: 16px;
+  color: var(--hud-text);
+}
+
+.hud-title {
+  font-size: 18px;
+  margin: 0;
+}
+
+.hud-subtitle {
+  font-size: 12px;
+  margin: 2px 0 0;
+  color: var(--hud-muted);
+}
+
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.tool-grid .tool {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.tool.active {
+  background: #38bdf8;
+  border-color: #38bdf8;
+  color: #0f172a;
+}
+
+.tool .cost {
+  font-size: 11px;
+  color: #facc15;
+}
+
+.info-panel {
+  background: rgba(15, 23, 42, 0.7);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.hint {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--hud-muted);
+  line-height: 1.4;
+}
