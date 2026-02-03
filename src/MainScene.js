@@ -73,6 +73,11 @@ export default class MainScene extends Phaser.Scene {
       const zoom = Phaser.Math.Clamp(this.cameras.main.zoom - deltaY * 0.001, 0.5, 2.5);
       this.cameras.main.setZoom(zoom);
     });
+
+    this.scale.on("resize", (gameSize) => {
+      this.cameras.main.setBounds(0, 0, GRID.cols * GRID.tileSize, GRID.rows * GRID.tileSize);
+      this.cameras.main.centerOn(gameSize.width / 2, gameSize.height / 2);
+    });
   }
 
   setupInput() {
@@ -100,8 +105,9 @@ export default class MainScene extends Phaser.Scene {
 
     this.input.on("pointerup", (pointer) => {
       if (this.isPanning) return;
-      if (pointer.leftButtonDown()) {
-        this.handlePlacement(pointer, pointer.event.shiftKey);
+      const isPrimaryClick = pointer.event?.button === 0 || pointer.leftButtonReleased?.() || pointer.pointerType === "touch";
+      if (isPrimaryClick) {
+        this.handlePlacement(pointer, pointer.event?.shiftKey);
       }
     });
   }
