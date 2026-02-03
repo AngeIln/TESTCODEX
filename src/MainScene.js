@@ -105,8 +105,9 @@ export default class MainScene extends Phaser.Scene {
 
     this.input.on("pointerup", (pointer) => {
       if (this.isPanning) return;
-      if (pointer.leftButtonDown()) {
-        this.handlePlacement(pointer, pointer.event.shiftKey);
+      const isPrimaryClick = pointer.event?.button === 0 || pointer.leftButtonReleased?.() || pointer.pointerType === "touch";
+      if (isPrimaryClick) {
+        this.handlePlacement(pointer, pointer.event?.shiftKey);
       }
     });
   }
