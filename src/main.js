@@ -1,17 +1,9 @@
-import MainScene from "./MainScene.js";
+import "./style.css";
+import Experience from "./Core/Experience.js";
 
-const config = {
-  type: Phaser.AUTO,
-  parent: "phaser-root",
-  width: window.innerWidth,
-  height: window.innerHeight,
-  backgroundColor: "#0f172a",
-  scene: MainScene,
-  physics: { default: "arcade" },
-};
+const canvas = document.querySelector("canvas.webgl");
 
-const game = new Phaser.Game(config);
-
-window.addEventListener("resize", () => {
-  game.scale.resize(window.innerWidth, window.innerHeight);
-});
+if (canvas) {
+  // TODO: Pass initial configuration (seed, scenario, locale) if needed.
+  new Experience({ canvas });
+}
